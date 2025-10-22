@@ -25,7 +25,7 @@ class DetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(child: Text('Details Screen')),
+      body: Center(child: Text('Details screen')),
     );
   }
 }
