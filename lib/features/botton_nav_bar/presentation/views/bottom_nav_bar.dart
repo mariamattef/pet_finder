@@ -15,7 +15,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    Text('Favorites Screen'),
+    Text('Favorite Screen'),
     Text('Chat Screen'),
     Text('Profile Screen'),
   ];

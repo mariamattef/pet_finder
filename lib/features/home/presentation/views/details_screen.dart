@@ -17,7 +17,6 @@ class DetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16.0),
             child: SvgPicture.asset(
               'assets/svg/heart2.svg',
-
               colorFilter: ColorFilter.mode(
                 AppTheme.primaryColor,
                 BlendMode.srcIn,
