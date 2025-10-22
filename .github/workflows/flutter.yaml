@@ -1,43 +1,99 @@
-name: Flutter CI/CD
+name: Android Fastlane with Firebase App Distribution Workflow
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
 jobs:
-  build:
+  distribute_to_firebase:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.32.0'
-          channel: 'stable'
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    - name: Checkout my repo code
+      uses: actions/checkout@v2
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
 
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Clean Flutter project
-        run: flutter clean
-      - name: Build APK
-        run: flutter build apk --release --verbose
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-      - name: Upload APK Artifact to firebase app distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{secrets.APP_ID}}
-          serviceCredentialsFileContent: ${{secrets.GOOGLE_APPLICATION_CREDENTIAL}}
-          groups: testers
-          file: build/app/outputs/flutter-apk/app-release.apk
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.4.7"
+        bundler-cache: true
+        working-directory: android
+        
+    - name: Build and Distribute App
+      env:
+        FIREBASE_CLI_TOKEN: ${{ secrets.FIREBASE_CLI_TOKEN }}
+      run: |
+        bundle exec fastlane android firebase_distribution
+      working-directory: android
+
+
+
+
+
+
+
+
+
+
+
+
+
+# name: Android Fastlane with firebase distribution
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+# jobs:
+#   distribute_to_firebase:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Set up JDK
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: '17'
+#           distribution: 'temurin'
+
+#       - name: Set up Flutter
+#         uses: subosito/flutter-action@v2
+#         with:
+#           flutter-version: '3.32.0'
+#           channel: 'stable'
+
+
+#       - name: Install dependencies
+#         run: flutter pub get
+
+#       - name: Clean Flutter project
+#         run: flutter clean
+
+#       - name: Build APK
+#         run: flutter build apk --release --verbose
+
+#       - name: Upload APK Artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: release-apk
+#           path: build/app/outputs/flutter-apk/app-release.apk
+#       - name: Upload APK Artifact to firebase app distribution
+#         uses: wzieba/Firebase-Distribution-Github-Action@v1
+#         with:
+#           appId: ${{secrets.APP_ID}}
+#           serviceCredentialsFileContent: ${{secrets.GOOGLE_APPLICATION_CREDENTIAL}}
+#           groups: testers
+#           file: build/app/outputs/flutter-apk/app-release.apk
